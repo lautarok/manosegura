@@ -1,0 +1,13 @@
+package domain
+
+import (
+	"github.com/google/uuid"
+)
+
+type RolePermission struct {
+	ID           uuid.UUID `bun:",pk,type:uuid,default:uuid_generate_v4()" json:"id"`
+	Role         *Role     `bun:"rel:belongs-to,join:role_id=id,type:uuid" json:"role_id"`
+	RoleID       uuid.UUID
+	Permission   *Permission `bun:"rel:belongs-to,join:permission_id=id,type:uuid" json:"permission_id"`
+	PermissionID uuid.UUID
+}
