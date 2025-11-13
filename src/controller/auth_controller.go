@@ -2,9 +2,7 @@ package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/lautarok/manosegura/src/dto"
-	"github.com/lautarok/manosegura/src/infra"
 	"github.com/lautarok/manosegura/src/service"
 )
 
@@ -43,23 +41,13 @@ func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := usersController.authService.Login(&dto)
-	if err != nil {
-		return err
-	}
-
-	tokenData := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId":     user.ID,
-		"subscriber": user.ID,
-	})
-
-	token, err := tokenData.SignedString([]byte(infra.Variables.JWT_SECRET))
+	token, err := usersController.authService.Login(&dto)
 	if err != nil {
 		return err
 	}
 
 	ctx.JSON(map[string]string{
-		"token": token,
+		"token": *token,
 	})
 	return nil
 }

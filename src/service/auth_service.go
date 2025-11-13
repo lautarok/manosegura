@@ -1,8 +1,9 @@
 package service
 
 import (
-	"github.com/lautarok/manosegura/src/domain"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lautarok/manosegura/src/dto"
+	"github.com/lautarok/manosegura/src/infra"
 	"github.com/lautarok/manosegura/src/pkg"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,7 +25,7 @@ func NewAuthService(deps *AuthServiceDeps) *AuthService {
 	}
 }
 
-func (authService *AuthService) Login(dto *dto.LoginDto) (*domain.User, error) {
+func (authService *AuthService) Login(dto *dto.LoginDto) (*string, error) {
 	user, err := authService.usersService.FindOneByUsername(dto.Username)
 	if err != nil {
 		return nil, err
@@ -48,5 +49,15 @@ func (authService *AuthService) Login(dto *dto.LoginDto) (*domain.User, error) {
 		return nil, pkg.ErrUnauthorized
 	}
 
-	return user, nil
+	tokenData := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId":     user.ID,
+		"subscriber": user.ID,
+	})
+
+	token, err := tokenData.SignedString([]byte(infra.Variables.JWT_SECRET))
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
 }
