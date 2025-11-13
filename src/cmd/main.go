@@ -14,23 +14,29 @@ func main() {
 	database := infra.NewDatabase(env)
 
 	rolesRepository := postgres.NewRolesRepository(database)
-	rolesService := service.NewRolesService(rolesRepository)
-
 	usersRepository := postgres.NewUsersRepository(database)
+	credentialsRepository := postgres.NewCredentialsRepository(database)
+
+	rolesService := service.NewRolesService(rolesRepository)
 	usersService := service.NewUsersService(&service.UsersServiceDeps{
 		UsersRepository: usersRepository,
 		Database:        database,
 		RolesService:    rolesService,
 	})
-	usersController := controller.NewUsersController(&controller.UsersControllerDeps{
-		UsersService: usersService,
-		RolesService: rolesService,
+	credentialsService := service.NewCredentialsService(credentialsRepository)
+	authService := service.NewAuthService(&service.AuthServiceDeps{
+		CredentialsService: credentialsService,
+		UsersService:       usersService,
 	})
+
+	usersController := controller.NewUsersController(usersService)
+	authController := controller.NewAuthController(authService)
 
 	infra.NewHttp(&infra.HttpConfig{
 		Env: env,
 		Controllers: []infra.Controller{
 			usersController,
+			authController,
 		},
 	})
 }

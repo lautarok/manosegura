@@ -163,3 +163,7 @@ func (usersService *UsersService) FindOne(dto *dto.IdDto) (*domain.User, error) 
 
 	return usersService.usersRepository.FindOne(dto)
 }
+
+func (usersService *UsersService) FindOneByUsername(username string) (*domain.User, error) {
+	return usersService.usersRepository.FindOneByUsername(username)
+}

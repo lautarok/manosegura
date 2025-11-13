@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/lautarok/manosegura/src/domain"
 	"github.com/lautarok/manosegura/src/infra"
 )
@@ -57,4 +58,16 @@ func (credentialsRepository *CredentialsRepository) CreateOne(credential *domain
 	}
 
 	return credential, nil
+}
+
+func (credentialsRepository *CredentialsRepository) FindOneByUserId(userId uuid.UUID) (*domain.Credential, error) {
+	var credential domain.Credential
+
+	err := credentialsRepository.database.DB.
+		NewSelect().
+		Model(&credential).
+		Where("user_id = ?", userId).
+		Scan(context.Background())
+
+	return &credential, err
 }

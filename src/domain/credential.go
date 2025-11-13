@@ -14,8 +14,8 @@ type Credential struct {
 	Password  string    `bun:"type:VARCHAR(60)" json:"-"`
 	User      *User     `bun:"rel:belongs-to,join:user_id=id" json:"user"`
 	UserID    uuid.UUID `bun:"user_id" json:"user_id"`
-	CreatedAt time.Time `bun:"default:current_timestamp,notnull"`
-	UpdatedAt time.Time `bun:"default:current_timestamp,notnull"`
+	CreatedAt time.Time `bun:"default:current_timestamp,notnull" json:"createdAt"`
+	UpdatedAt time.Time `bun:"default:current_timestamp,notnull" json:"updatedAt"`
 }
 
 func (credential *Credential) BeforeUpdate(ctx context.Context) (context.Context, error) {

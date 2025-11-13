@@ -10,19 +10,14 @@ import (
 )
 
 type UsersController struct {
-	path string
-	deps *UsersControllerDeps
+	path         string
+	usersService *service.UsersService
 }
 
-type UsersControllerDeps struct {
-	UsersService *service.UsersService
-	RolesService *service.RolesService
-}
-
-func NewUsersController(deps *UsersControllerDeps) *UsersController {
+func NewUsersController(usersService *service.UsersService) *UsersController {
 	return &UsersController{
-		path: "users",
-		deps: deps,
+		path:         "users",
+		usersService: usersService,
 	}
 }
 
@@ -51,7 +46,7 @@ func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	userList, err := usersController.deps.UsersService.GetUserList(&dto)
+	userList, err := usersController.usersService.GetUserList(&dto)
 	if err != nil {
 		return err
 	}
@@ -68,7 +63,7 @@ func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 // @Produce json
 // @Router /users [post]
 // @Success 201 {object} domain.User
-// @Param request body dto.CreateUserDto true "Datos del usuario"
+// @Param request body dto.CreateUserDto true "User data"
 func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	var dto dto.CreateUserDto
 	ctx.BodyParser(&dto)
@@ -78,7 +73,7 @@ func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	userCreated, err := usersController.deps.UsersService.CreateOne(&dto)
+	userCreated, err := usersController.usersService.CreateOne(&dto)
 	if err != nil {
 		return err
 	}
@@ -114,7 +109,7 @@ func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	userCreated, err := usersController.deps.UsersService.UpdateOne(&dto)
+	userCreated, err := usersController.usersService.UpdateOne(&dto)
 	if err != nil {
 		return err
 	}
@@ -149,7 +144,7 @@ func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = usersController.deps.UsersService.DeleteOne(&dto)
+	err = usersController.usersService.DeleteOne(&dto)
 	if err != nil {
 		return err
 	}
@@ -183,7 +178,7 @@ func (usersController *UsersController) GetUser(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := usersController.deps.UsersService.FindOne(&dto)
+	user, err := usersController.usersService.FindOne(&dto)
 	if err != nil {
 		return err
 	}

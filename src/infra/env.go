@@ -8,9 +8,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var Variables *Env
+
 type Env struct {
 	HTTP_PORT    int
 	POSTGRES_DSN string
+	JWT_SECRET   string
 }
 
 func NewEnv() *Env {
@@ -29,8 +32,11 @@ func NewEnv() *Env {
 		httpPort = 3000
 	}
 
-	return &Env{
+	Variables = &Env{
 		HTTP_PORT:    httpPort,
 		POSTGRES_DSN: os.Getenv("POSTGRES_DSN"),
+		JWT_SECRET:   os.Getenv("JWT_SECRET"),
 	}
+
+	return Variables
 }
