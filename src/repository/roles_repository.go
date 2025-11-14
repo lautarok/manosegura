@@ -8,4 +8,5 @@ import (
 type RolesRepository interface {
 	Exists(uuid uuid.UUID) (bool, error)
 	FindAll() (*[]domain.Role, error)
+	FindByAlias(alias string) (*domain.Role, error)
 }

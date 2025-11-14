@@ -71,3 +71,15 @@ func (credentialsRepository *CredentialsRepository) FindOneByUserId(userId uuid.
 
 	return &credential, err
 }
+
+func (credentialsRepository *CredentialsRepository) FindOneByUsername(username string) (*domain.Credential, error) {
+	var credential domain.Credential
+
+	err := credentialsRepository.database.DB.
+		NewSelect().
+		Model(&credential).
+		Where("username = ?", username).
+		Scan(context.Background())
+
+	return &credential, err
+}

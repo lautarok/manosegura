@@ -13,5 +13,4 @@ type UsersRepository interface {
 	DeleteOne(dto *dto.IdDto) error
 	Exists(id uuid.UUID) (bool, error)
 	FindOne(dto *dto.IdDto) (*domain.User, error)
-	FindOneByUsername(username string) (*domain.User, error)
 }

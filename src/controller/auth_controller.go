@@ -21,6 +21,7 @@ func NewAuthController(authService *service.AuthService) *AuthController {
 func (controller *AuthController) RegisterRoutes(app fiber.Router) {
 	router := app.Group(controller.path)
 	router.Post("login", controller.Login)
+	router.Post("signup", controller.Signup)
 }
 
 // GetUserList godoc
@@ -30,24 +31,53 @@ func (controller *AuthController) RegisterRoutes(app fiber.Router) {
 // @Accept json
 // @Produce json
 // @Router /auth/login [post]
-// @Success 200 {object} domain.User
+// @Success 201 {object} dto.TokenResponseDto
 // @Param request body dto.LoginDto true "User credentials"
 func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
-	var dto dto.LoginDto
-	err := ctx.BodyParser(&dto)
+	var body dto.LoginDto
+	err := ctx.BodyParser(&body)
 	if err != nil {
 		return err
-	} else if err := dto.Validate(); err != nil {
+	} else if err := body.Validate(); err != nil {
 		return err
 	}
 
-	token, err := usersController.authService.Login(&dto)
+	token, err := usersController.authService.Login(&body)
 	if err != nil {
 		return err
 	}
 
-	ctx.JSON(map[string]string{
-		"token": *token,
+	ctx.Status(201)
+	ctx.JSON(&dto.TokenResponseDto{
+		Token: *token,
 	})
+	return nil
+}
+
+// GetUserList godoc
+// @Summary Signup
+// @Description Signup with user and credentials info
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Router /auth/signup [post]
+// @Success 201 {object} domain.User
+// @Param request body dto.SignupDto true "Body data"
+func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
+	var body dto.SignupDto
+	err := ctx.BodyParser(&body)
+	if err != nil {
+		return err
+	} else if err := body.Validate(); err != nil {
+		return err
+	}
+
+	createdUser, err := usersController.authService.Signup(&body)
+	if err != nil {
+		return err
+	}
+
+	ctx.Status(201)
+	ctx.JSON(createdUser)
 	return nil
 }

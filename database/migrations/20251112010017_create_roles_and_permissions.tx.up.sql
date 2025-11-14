@@ -29,6 +29,13 @@ INSERT INTO role_permissions (permission_id, role_id) VALUES (
     (SELECT id FROM roles WHERE alias = 'admin')
 );
 
+INSERT INTO roles (alias) VALUES ('regular user');
+INSERT INTO permissions (alias) VALUES ('regular user');
+INSERT INTO role_permissions (permission_id, role_id) VALUES (
+    (SELECT id FROM permissions WHERE alias = 'regular user'),
+    (SELECT id FROM roles WHERE alias = 'regular user')
+);
+
 INSERT INTO users (name, surname, role_id) VALUES (
     'Lautaro',
     'Kazalukian',

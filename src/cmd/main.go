@@ -27,6 +27,7 @@ func main() {
 	authService := service.NewAuthService(&service.AuthServiceDeps{
 		CredentialsService: credentialsService,
 		UsersService:       usersService,
+		Database:           database,
 	})
 
 	usersController := controller.NewUsersController(usersService)

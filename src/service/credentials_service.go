@@ -19,3 +19,15 @@ func NewCredentialsService(credentialsRepository repository.CredentialsRepositor
 func (credentialsService *CredentialsService) FindOneByUserId(userId uuid.UUID) (*domain.Credential, error) {
 	return credentialsService.credentialsRepository.FindOneByUserId(userId)
 }
+
+func (credentialsService *CredentialsService) FindOneByUsername(username string) (*domain.Credential, error) {
+	return credentialsService.credentialsRepository.FindOneByUsername(username)
+}
+
+func (credentialsService *CredentialsService) EmailExists(email string) (bool, error) {
+	return credentialsService.credentialsRepository.EmailExists(email)
+}
+
+func (credentialsService *CredentialsService) UsernameExists(username string) (bool, error) {
+	return credentialsService.credentialsRepository.UsernameExists(username)
+}

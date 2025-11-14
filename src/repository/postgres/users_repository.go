@@ -105,18 +105,3 @@ func (usersRepository *UsersRepository) FindOne(dto *dto.IdDto) (*domain.User, e
 
 	return &user, err
 }
-
-func (usersRepository *UsersRepository) FindOneByUsername(username string) (*domain.User, error) {
-	var user domain.User
-
-	user.Name = username
-
-	err := usersRepository.database.DB.
-		NewSelect().
-		Model(&user).
-		Relation("Role").
-		Relation("Role.Permissions").
-		Scan(context.Background())
-
-	return &user, err
-}

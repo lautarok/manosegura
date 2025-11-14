@@ -2,10 +2,13 @@ package infra
 
 import (
 	"log"
+	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
+	"github.com/lautarok/manosegura/src/pkg"
 )
 
 type Http struct {
@@ -24,6 +27,8 @@ type HttpConfig struct {
 func NewHttp(config *HttpConfig) *Http {
 	app := fiber.New()
 
+	app.Use(ErrorHandlerMiddleware())
+
 	for _, controller := range config.Controllers {
 		controller.RegisterRoutes(app)
 	}
@@ -39,5 +44,21 @@ func NewHttp(config *HttpConfig) *Http {
 
 	return &Http{
 		App: app,
+	}
+}
+
+func ErrorHandlerMiddleware() fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		err := ctx.Next()
+		if err == nil {
+			return nil
+		}
+
+		if strings.Contains(err.Error(), "validation") {
+			return ctx.Status(http.StatusBadRequest).JSON(pkg.NewAppError(http.StatusBadRequest, err.Error()))
+		}
+
+		appErr := pkg.MapError(err)
+		return ctx.Status(appErr.StatusCode).JSON(appErr)
 	}
 }

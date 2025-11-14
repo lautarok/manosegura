@@ -10,4 +10,5 @@ type CredentialsRepository interface {
 	UsernameExists(username string) (bool, error)
 	CreateOne(*domain.Credential) (*domain.Credential, error)
 	FindOneByUserId(userId uuid.UUID) (*domain.Credential, error)
+	FindOneByUsername(username string) (*domain.Credential, error)
 }

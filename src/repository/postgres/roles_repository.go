@@ -46,3 +46,15 @@ func (rolesRepository *RolesRepository) Exists(id uuid.UUID) (bool, error) {
 
 	return exists, nil
 }
+
+func (rolesRepository *RolesRepository) FindByAlias(alias string) (*domain.Role, error) {
+	var role *domain.Role
+
+	err := rolesRepository.database.DB.
+		NewSelect().
+		Model(&role).
+		Where("alias = ?", alias).
+		Scan(context.Background())
+
+	return role, err
+}
