@@ -27,19 +27,26 @@
 .
 ├── database
 │   └── migrations
-├── docs
-├── go.mod & go.sum
 ├── src
 │   ├── cmd
 │   │   ├── database
-│   ├── controller
-│   ├── domain
-│   ├── dto
-│   ├── factory
+│   │   ├── api
+│   ├── internal
+│   │   ├── exceptions
+│   │   ├── modules
+│   │   │   ├── [example module]
+│   │   │   │   ├── domain
+│   │   │   │   ├── dto
+│   │   │   │   ├── controllers
+│   │   │   │   ├── services
+│   │   │   │   ├── repositories
+│   │   │   │   ├── interfaces
+│   │   │   │   ├── middlewares
 │   ├── infra
-│   ├── pkg
-│   ├── repository
-│   │   ├── postgres
+│   │   ├── factory
+│   │   ├── http
+│   │   ├── env
+│   │   ├── database
 └── └── service
 ```
 
