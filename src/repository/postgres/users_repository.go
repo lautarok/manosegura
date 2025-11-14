@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/lautarok/manosegura/src/domain"
@@ -33,7 +35,7 @@ func (usersRepository *UsersRepository) FindAll(dto *dto.PaginationDto) (*[]doma
 		Offset(offset).
 		Scan(context.Background())
 
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 
@@ -42,7 +44,7 @@ func (usersRepository *UsersRepository) FindAll(dto *dto.PaginationDto) (*[]doma
 
 func (usersRepository *UsersRepository) CreateOne(user *domain.User) (*domain.User, error) {
 	err := usersRepository.database.DB.NewInsert().
-		Model(&user).
+		Model(user).
 		Returning("*").
 		Scan(context.Background())
 
@@ -99,9 +101,14 @@ func (usersRepository *UsersRepository) FindOne(dto *dto.IdDto) (*domain.User, e
 	err := usersRepository.database.DB.
 		NewSelect().
 		Model(&user).
+		WherePK().
 		Relation("Role").
 		Relation("Role.Permissions").
 		Scan(context.Background())
 
-	return &user, err
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return &user, nil
 }

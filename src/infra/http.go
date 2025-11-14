@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
+	_ "github.com/lautarok/manosegura/docs"
 	"github.com/lautarok/manosegura/src/pkg"
 )
 
@@ -24,6 +25,12 @@ type HttpConfig struct {
 	Controllers []Controller
 }
 
+// @title Mano Segura API
+// @version 1.0
+// @description Documentation of Mano Segura backend API
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func NewHttp(config *HttpConfig) *Http {
 	app := fiber.New()
 
@@ -33,9 +40,7 @@ func NewHttp(config *HttpConfig) *Http {
 		controller.RegisterRoutes(app)
 	}
 
-	app.Get("/swagger/*", swagger.New(swagger.Config{
-		Title: "Mano Segura API documentation",
-	}))
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	err := app.Listen(":" + strconv.Itoa((config.Env.HTTP_PORT)))
 	if err != nil {

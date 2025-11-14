@@ -34,8 +34,8 @@ func NewAuthService(deps *AuthServiceDeps) *AuthService {
 	}
 }
 
-func (authService *AuthService) Login(dto *dto.LoginDto) (*string, error) {
-	credential, err := authService.credentialsService.FindOneByUsername(dto.Username)
+func (authService *AuthService) Login(loginDto *dto.LoginDto) (*string, error) {
+	credential, err := authService.credentialsService.FindOneByUsername(loginDto.Username)
 	if err != nil {
 		return nil, err
 	} else if credential == nil {
@@ -44,24 +44,17 @@ func (authService *AuthService) Login(dto *dto.LoginDto) (*string, error) {
 
 	err = bcrypt.CompareHashAndPassword(
 		[]byte(credential.Password),
-		[]byte(dto.Password),
+		[]byte(loginDto.Password),
 	)
 
 	if err != nil {
 		return nil, pkg.ErrUnauthorized
 	}
 
-	tokenData := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId":     credential.UserID,
-		"subscriber": credential.UserID,
+	return authService.CreateAuthToken(&dto.AuthTokenPayloadDto{
+		UserID:     credential.UserID,
+		Subscriber: credential.UserID,
 	})
-
-	token, err := tokenData.SignedString([]byte(infra.Variables.JWT_SECRET))
-	if err != nil {
-		return nil, err
-	}
-
-	return &token, nil
 }
 
 func (authService *AuthService) Signup(dto *dto.SignupDto) (*domain.User, error) {
@@ -125,4 +118,38 @@ func (authService *AuthService) Signup(dto *dto.SignupDto) (*domain.User, error)
 	})
 
 	return newUser, err
+}
+
+func (authService *AuthService) CreateAuthToken(dto *dto.AuthTokenPayloadDto) (*string, error) {
+	tokenData := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId":     dto.UserID,
+		"subscriber": dto.Subscriber,
+	})
+
+	token, err := tokenData.SignedString([]byte(infra.Variables.JWT_SECRET))
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+}
+
+func (authService *AuthService) GetAuthTokenPayload(token string) (*dto.AuthTokenPayloadDto, error) {
+	var payload dto.AuthTokenPayloadDto
+
+	jwtToken, err := jwt.ParseWithClaims(token, &payload, func(t *jwt.Token) (interface{}, error) {
+		if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+			return nil, pkg.ErrInvalidBearerToken
+		}
+
+		return []byte(infra.Variables.JWT_SECRET), nil
+	})
+
+	if err != nil {
+		return nil, err
+	} else if !jwtToken.Valid {
+		return nil, pkg.ErrInvalidBearerToken
+	}
+
+	return &payload, nil
 }

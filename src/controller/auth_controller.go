@@ -2,19 +2,27 @@ package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/lautarok/manosegura/src/controller/middleware"
 	"github.com/lautarok/manosegura/src/dto"
 	"github.com/lautarok/manosegura/src/service"
 )
 
 type AuthController struct {
-	path        string
-	authService *service.AuthService
+	path           string
+	authService    *service.AuthService
+	authMiddleware *middleware.AuthMiddleware
 }
 
-func NewAuthController(authService *service.AuthService) *AuthController {
+type AuthControllerDeps struct {
+	AuthService    *service.AuthService
+	AuthMiddleware *middleware.AuthMiddleware
+}
+
+func NewAuthController(deps *AuthControllerDeps) *AuthController {
 	return &AuthController{
-		path:        "auth",
-		authService: authService,
+		path:           "auth",
+		authService:    deps.AuthService,
+		authMiddleware: deps.AuthMiddleware,
 	}
 }
 

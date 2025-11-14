@@ -1,13 +1,20 @@
 package main
 
 import (
-	_ "github.com/lautarok/manosegura/docs"
 	"github.com/lautarok/manosegura/src/controller"
+	"github.com/lautarok/manosegura/src/controller/middleware"
 	"github.com/lautarok/manosegura/src/infra"
 	"github.com/lautarok/manosegura/src/repository/postgres"
 	"github.com/lautarok/manosegura/src/service"
 )
 
+// @title Mano Segura API
+// @version 1.0
+// @description Documentation of Mano Segura backend API. Use the format: Bearer {token} in the Authorization header.
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	env := infra.NewEnv()
 
@@ -30,14 +37,30 @@ func main() {
 		Database:           database,
 	})
 
-	usersController := controller.NewUsersController(usersService)
-	authController := controller.NewAuthController(authService)
+	authMiddleware := middleware.NewAuthMiddleware(&middleware.AuthMiddlewareDeps{
+		AuthService:  authService,
+		UsersService: usersService,
+	})
+
+	usersController := controller.NewUsersController(&controller.UsersControllerDeps{
+		AuthMiddleware: authMiddleware,
+		UsersService:   usersService,
+	})
+	authController := controller.NewAuthController(&controller.AuthControllerDeps{
+		AuthMiddleware: authMiddleware,
+		AuthService:    authService,
+	})
+	rolesController := controller.NewRolesController(&controller.RolesControllerDeps{
+		AuthMiddleware: authMiddleware,
+		RolesService:   rolesService,
+	})
 
 	infra.NewHttp(&infra.HttpConfig{
 		Env: env,
 		Controllers: []infra.Controller{
 			usersController,
 			authController,
+			rolesController,
 		},
 	})
 }

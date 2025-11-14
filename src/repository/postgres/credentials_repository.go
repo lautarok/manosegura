@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/lautarok/manosegura/src/domain"
@@ -69,7 +71,11 @@ func (credentialsRepository *CredentialsRepository) FindOneByUserId(userId uuid.
 		Where("user_id = ?", userId).
 		Scan(context.Background())
 
-	return &credential, err
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return &credential, nil
 }
 
 func (credentialsRepository *CredentialsRepository) FindOneByUsername(username string) (*domain.Credential, error) {
@@ -81,5 +87,9 @@ func (credentialsRepository *CredentialsRepository) FindOneByUsername(username s
 		Where("username = ?", username).
 		Scan(context.Background())
 
-	return &credential, err
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return &credential, nil
 }

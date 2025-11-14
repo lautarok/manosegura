@@ -2,9 +2,12 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/lautarok/manosegura/src/domain"
+	"github.com/lautarok/manosegura/src/dto"
 	"github.com/lautarok/manosegura/src/infra"
 )
 
@@ -18,15 +21,19 @@ func NewRolesRepository(database *infra.Database) *RolesRepository {
 	}
 }
 
-func (rolesRepository *RolesRepository) FindAll() (*[]domain.Role, error) {
+func (rolesRepository *RolesRepository) FindAll(dto *dto.PaginationDto) (*[]domain.Role, error) {
 	var roleList []domain.Role
+
+	offset := (dto.Page - 1) * dto.Limit
 
 	err := rolesRepository.database.DB.
 		NewSelect().
+		Limit(dto.Limit).
+		Offset(offset).
 		Model(&roleList).
 		Scan(context.Background())
 
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 
@@ -40,15 +47,11 @@ func (rolesRepository *RolesRepository) Exists(id uuid.UUID) (bool, error) {
 		Where("id = ?", id).
 		Exists(context.Background())
 
-	if err != nil {
-		return false, err
-	}
-
-	return exists, nil
+	return exists, err
 }
 
 func (rolesRepository *RolesRepository) FindByAlias(alias string) (*domain.Role, error) {
-	var role *domain.Role
+	var role domain.Role
 
 	err := rolesRepository.database.DB.
 		NewSelect().
@@ -56,5 +59,9 @@ func (rolesRepository *RolesRepository) FindByAlias(alias string) (*domain.Role,
 		Where("alias = ?", alias).
 		Scan(context.Background())
 
-	return role, err
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return &role, nil
 }
