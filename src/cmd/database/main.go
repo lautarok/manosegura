@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/lautarok/manosegura/src/infra"
+	"github.com/lautarok/manosegura/src/infra/database"
+	"github.com/lautarok/manosegura/src/infra/env"
 )
 
 func main() {
@@ -15,8 +16,8 @@ func main() {
 		log.Fatal("Try \"migration create\" command")
 	}
 
-	env := infra.NewEnv()
-	db := infra.NewDatabase(env)
+	env := env.NewEnv()
+	db := database.NewDatabase(env)
 	ctx := context.Background()
 
 	db.CreateMigration(ctx, args[3])
