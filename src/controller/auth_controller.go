@@ -30,6 +30,7 @@ func (controller *AuthController) RegisterRoutes(app fiber.Router) {
 	router := app.Group(controller.path)
 	router.Post("login", controller.Login)
 	router.Post("signup", controller.Signup)
+	router.Get("me", controller.authMiddleware.AuthUser(false), controller.GetMyUser)
 }
 
 // GetUserList godoc
@@ -87,5 +88,19 @@ func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
 
 	ctx.Status(201)
 	ctx.JSON(createdUser)
+	return nil
+}
+
+// GetUserList godoc
+// @Summary Get my user
+// @Description Get my user info
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Router /auth/me [get]
+// @Success 200 {object} domain.User
+// @Security BearerAuth
+func (usersController *AuthController) GetMyUser(ctx *fiber.Ctx) error {
+	ctx.JSON(ctx.Locals("auth user"))
 	return nil
 }

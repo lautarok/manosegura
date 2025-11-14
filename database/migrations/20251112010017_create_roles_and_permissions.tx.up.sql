@@ -1,11 +1,31 @@
 CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    alias VARCHAR(30) UNIQUE NOT NULL
+    alias VARCHAR(30) UNIQUE NOT NULL,
+    name_en VARCHAR(30),
+    name_es VARCHAR(30),
+    name_fr VARCHAR(30),
+    name_pt VARCHAR(30),
+    CHECK(
+        name_en NOT NULL OR
+        name_es NOT NULL OR
+        name_fr NOT NULL OR
+        name_pt NOT NULL
+    )
 );
 
 CREATE TABLE permissions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    alias VARCHAR(50) UNIQUE NOT NULL
+    alias VARCHAR(50) UNIQUE NOT NULL,
+    name_en VARCHAR(30),
+    name_es VARCHAR(30),
+    name_fr VARCHAR(30),
+    name_pt VARCHAR(30),
+    CHECK(
+        name_en NOT NULL OR
+        name_es NOT NULL OR
+        name_fr NOT NULL OR
+        name_pt NOT NULL
+    )
 );
 
 CREATE TABLE role_permissions (
@@ -22,15 +42,64 @@ ADD CONSTRAINT fk_role_id
 FOREIGN KEY (role_id)
 REFERENCES roles(id);
 
-INSERT INTO roles (alias) VALUES ('admin');
-INSERT INTO permissions (alias) VALUES ('manage all');
+INSERT INTO roles (
+    alias,
+    name_en,
+    name_es,
+    name_fr,
+    name_pt
+) VALUES (
+    'admin',
+    'Administrator',
+    'Administrador',
+    'Administrateur',
+    'Administrador'
+);
+INSERT INTO permissions (
+    alias,
+    name_en,
+    name_es,
+    name_fr,
+    name_pt
+) VALUES (
+    'manage all',
+    'Manage all',
+    'Administrar todo',
+    'Gérer tout',
+    'Gerenciar tudo'
+);
 INSERT INTO role_permissions (permission_id, role_id) VALUES (
     (SELECT id FROM permissions WHERE alias = 'manage all'),
     (SELECT id FROM roles WHERE alias = 'admin')
 );
 
-INSERT INTO roles (alias) VALUES ('regular user');
-INSERT INTO permissions (alias) VALUES ('regular user');
+INSERT INTO roles (
+    alias,
+    name_en,
+    name_es,
+    name_fr,
+    name_pt
+) VALUES (
+    'regular user',
+    'Regular user',
+    'Usuario regular',
+    'Utilisateur régulier',
+    'Usuário normal'
+);
+
+INSERT INTO permissions (
+    alias,
+    name_en,
+    name_es,
+    name_fr,
+    name_pt
+) VALUES (
+    'regular user',
+    'Regular user',
+    'Usuario regular',
+    'Utilisateur régulier',
+    'Usuário normal'
+);
 INSERT INTO role_permissions (permission_id, role_id) VALUES (
     (SELECT id FROM permissions WHERE alias = 'regular user'),
     (SELECT id FROM roles WHERE alias = 'regular user')
