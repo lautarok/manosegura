@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
 	"github.com/lautarok/manosegura/src/internal/modules/common/dto"
+	_ "github.com/lautarok/manosegura/src/internal/modules/roles/domain"
 	"github.com/lautarok/manosegura/src/internal/modules/roles/services"
 )
 
@@ -31,13 +33,17 @@ func (controller *RolesController) RegisterRoutes(app fiber.Router) {
 	router.Get("", controller.authMiddleware.AuthUser(false, "manage all"), controller.GetRoles)
 }
 
+func (rolesController *RolesController) RegisterDocs(docs *openapi3.T) {
+
+}
+
 // GetRoles godoc
 // @Summary Get roles
 // @Description Get all roles
 // @Tags Roles
 // @Accept json
 // @Produce json
-// @Router /roles [get]
+// @Router get /roles
 // @Success 200 {array} domain.Role
 // @Param request query dto.PaginationDto false "Pagination"
 // @Security BearerAuth

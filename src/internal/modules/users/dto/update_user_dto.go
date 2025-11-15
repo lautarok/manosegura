@@ -5,6 +5,7 @@ import (
 	"github.com/lautarok/manosegura/src/infra/validation"
 )
 
+// swagger:model
 type UpdateUserDto struct {
 	ID      uuid.UUID `validate:"uuid" json:"-"`
 	Name    string    `validate:"min=3,max=40" json:"name" example:"Daniel"`

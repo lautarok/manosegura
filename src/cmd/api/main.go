@@ -4,6 +4,7 @@ import (
 	"github.com/lautarok/manosegura/src/infra/database"
 	"github.com/lautarok/manosegura/src/infra/env"
 	"github.com/lautarok/manosegura/src/infra/http"
+	"github.com/lautarok/manosegura/src/internal/docs"
 	authControllerPackage "github.com/lautarok/manosegura/src/internal/modules/auth/controllers"
 	authMiddleware "github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
 	authServicePackage "github.com/lautarok/manosegura/src/internal/modules/auth/services"
@@ -64,8 +65,15 @@ func main() {
 		RolesService:   rolesService,
 	})
 
+	docsGenerator := docs.NewDocsGenerator(&docs.DocsGeneratorConfig{
+		Title:       "Mano Segura",
+		Description: "Mano Segura API documentation",
+		Version:     "1.0.0",
+	})
+
 	http.NewHttp(&http.HttpConfig{
-		Env: env,
+		Env:           env,
+		DocsGenerator: docsGenerator,
 		Controllers: []http.Controller{
 			usersController,
 			authController,

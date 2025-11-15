@@ -5,6 +5,7 @@ import (
 	"github.com/lautarok/manosegura/src/infra/validation"
 )
 
+// swagger:model
 type CreateUserDto struct {
 	Username string    `validate:"required,min=6,max=26" example:"usuario.prueba" json:"username"`
 	Name     string    `validate:"required,min=3,max=40" json:"name" example:"Lautaro"`

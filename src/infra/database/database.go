@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/lautarok/manosegura/src/infra/env"
-	commonDomain "github.com/lautarok/manosegura/src/internal/modules/common/domain"
 	credentialsDomain "github.com/lautarok/manosegura/src/internal/modules/credentials/domain"
 	permissionsDomain "github.com/lautarok/manosegura/src/internal/modules/permissions/domain"
 	rolesDomain "github.com/lautarok/manosegura/src/internal/modules/roles/domain"
@@ -55,7 +54,7 @@ func NewDatabase(env *env.Env) *Database {
 
 	db.RegisterModel(
 		(*credentialsDomain.Credential)(nil),
-		(*commonDomain.RolePermission)(nil),
+		(*rolesDomain.RolePermission)(nil),
 		(*permissionsDomain.Permission)(nil),
 		(*rolesDomain.Role)(nil),
 		(*usersDomain.User)(nil),

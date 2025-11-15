@@ -5,6 +5,7 @@ import (
 	permissionsDomain "github.com/lautarok/manosegura/src/internal/modules/permissions/domain"
 )
 
+// swagger:model
 type RolePermission struct {
 	ID           uuid.UUID `bun:",pk,type:uuid,default:uuid_generate_v4()" json:"id"`
 	Role         *Role     `bun:"rel:belongs-to,join:role_id=id,type:uuid" json:"role_id"`

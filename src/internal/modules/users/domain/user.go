@@ -7,6 +7,7 @@ import (
 	rolesDomain "github.com/lautarok/manosegura/src/internal/modules/roles/domain"
 )
 
+// swagger:model
 type User struct {
 	ID        uuid.UUID         `bun:",pk,type:uuid,default:uuid_generate_v4()" json:"id"`
 	Name      string            `bun:"type:VARCHAR(40),notnull" json:"name"`

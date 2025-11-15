@@ -17,7 +17,7 @@ var ErrInvalidBearerToken = errors.New("invalid bearer token")
 var ErrInsufficientPermissions = errors.New("insufficient permissions")
 
 type AppError struct {
-	StatusCode int    `json:"statusCode"`
+	StatusCode int    `json:"statusCode" example:"500"`
 	Message    string `json:"message"`
 }
 

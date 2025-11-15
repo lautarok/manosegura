@@ -28,6 +28,7 @@
 ├── database
 │   └── migrations
 ├── src
+│   ├── docs
 │   ├── cmd
 │   │   ├── database
 │   │   ├── api
@@ -89,7 +90,7 @@ Esto crea archivos .tx.up.sql y .tx.down.sql en database/migrations.
 La API está documentada con Swaggo. Para generar la documentación:
 
 ```
-swag init -g src/cmd/main.go -o docs
+swag init -g src/cmd/main.go -o docs --parseDependency
 ```
 
 Luego accedé a http://localhost:3000/swagger en tu navegador.

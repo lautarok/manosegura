@@ -3,10 +3,12 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	middleware "github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
 	"github.com/lautarok/manosegura/src/internal/modules/common/dto"
+	_ "github.com/lautarok/manosegura/src/internal/modules/users/domain"
 	usersDto "github.com/lautarok/manosegura/src/internal/modules/users/dto"
 	"github.com/lautarok/manosegura/src/internal/modules/users/services"
 )
@@ -39,16 +41,11 @@ func (controller *UsersController) RegisterRoutes(app fiber.Router) {
 	router.Get(":id", controller.authMiddleware.AuthUser(true, "manage all"), controller.GetUser)
 }
 
-// GetUserList godoc
-// @Summary Get users
-// @Description Get all user list
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Router /users [get]
-// @Success 200 {array} domain.User
-// @Param request query dto.PaginationDto false "Pagination"
-// @Security BearerAuth
+func (controller *UsersController) RegisterDocs(openapiDocs *openapi3.T) {
+
+}
+
+// @Router get /users
 func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)
@@ -65,16 +62,6 @@ func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// CreateUser godoc
-// @Summary Post user
-// @Description Create a new user
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Router /users [post]
-// @Success 201 {object} domain.User
-// @Param request body dto.CreateUserDto true "User data"
-// @Security BearerAuth
 func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.CreateUserDto
 	ctx.BodyParser(&dto)
@@ -95,17 +82,6 @@ func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// UpdateUser godoc
-// @Summary Update user
-// @Description Update existing user data
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Param request body dto.UpdateUserDto true "New user data"
-// @Success 200 {object} domain.User
-// @Router /users/{id} [put]
-// @Security BearerAuth
 func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.UpdateUserDto
 	ctx.BodyParser(&dto)
@@ -132,16 +108,6 @@ func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// DeleteUser godoc
-// @Summary Delete user
-// @Description Delete existing user
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Success 200
-// @Router /users/{id} [delete]
-// @Security BearerAuth
 func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)
@@ -167,16 +133,6 @@ func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// GetUser godoc
-// @Summary Get single user
-// @Description Get existing user data
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Success 200
-// @Router /users/{id} [get]
-// @Security BearerAuth
 func (usersController *UsersController) GetUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)

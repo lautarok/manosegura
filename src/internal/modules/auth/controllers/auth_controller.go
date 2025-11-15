@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	"github.com/lautarok/manosegura/src/internal/exceptions"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/dto"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/services"
+	"github.com/lautarok/manosegura/src/internal/modules/users/domain"
 )
 
 type AuthController struct {
@@ -33,15 +36,10 @@ func (controller *AuthController) RegisterRoutes(app fiber.Router) {
 	router.Get("me", controller.authMiddleware.AuthUser(false), controller.GetMyUser)
 }
 
-// GetUserList godoc
-// @Summary Authenticate
-// @Description Login with username and password
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Router /auth/login [post]
-// @Success 201 {object} dto.TokenResponseDto
-// @Param request body dto.LoginDto true "User credentials"
+func (controller *AuthController) RegisterDocs(docs *openapi3.T) {
+
+}
+
 func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
 	var body dto.LoginDto
 	err := ctx.BodyParser(&body)
@@ -63,15 +61,6 @@ func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// GetUserList godoc
-// @Summary Signup
-// @Description Signup with user and credentials info
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Router /auth/signup [post]
-// @Success 201 {object} domain.User
-// @Param request body dto.SignupDto true "Body data"
 func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
 	var body dto.SignupDto
 	err := ctx.BodyParser(&body)
@@ -91,16 +80,11 @@ func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// GetUserList godoc
-// @Summary Get my user
-// @Description Get my user info
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Router /auth/me [get]
-// @Success 200 {object} domain.User
-// @Security BearerAuth
 func (usersController *AuthController) GetMyUser(ctx *fiber.Ctx) error {
-	ctx.JSON(ctx.Locals("auth user"))
+	user, ok := (ctx.Locals("auth user")).(*domain.User)
+	if !ok {
+		return exceptions.ErrUserNotFound
+	}
+	ctx.JSON(user)
 	return nil
 }
