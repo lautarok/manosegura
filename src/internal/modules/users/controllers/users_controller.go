@@ -45,6 +45,7 @@ func (controller *UsersController) RegisterRoutes(app fiber.Router) {
 // @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
 // @Returns default AppError
 // @QueryParams PaginationDto
+// @BearerAuth
 func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)
@@ -67,6 +68,7 @@ func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 // @Returns 409 AppError example:"{\"statusCode\": 409, \"message\": \"email already in use\"}"
 // @Returns default AppError
 // @BodyRequest CreateUserDto
+// @BearerAuth
 func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.CreateUserDto
 	ctx.BodyParser(&dto)
@@ -95,6 +97,7 @@ func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 // @Returns default AppError
 // @BodyRequest CreateUserDto
 // @RouteParams IdDto
+// @BearerAuth
 func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.UpdateUserDto
 	ctx.BodyParser(&dto)
@@ -128,6 +131,7 @@ func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 // @Returns default AppError
 // @BodyRequest CreateUserDto
 // @RouteParams IdDto
+// @BearerAuth
 func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)
@@ -159,6 +163,7 @@ func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 // @Returns 404 AppError example:"{\"statusCode\": 404, \"message\": \"user not found\"}"
 // @Returns default AppError
 // @RouteParams IdDto
+// @BearerAuth
 func (usersController *UsersController) GetUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)
