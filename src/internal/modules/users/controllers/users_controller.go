@@ -45,7 +45,6 @@ func (controller *UsersController) RegisterDocs(openapiDocs *openapi3.T) {
 
 }
 
-// @Router get /users
 func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)

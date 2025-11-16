@@ -18,13 +18,6 @@ import (
 	usersServicePackage "github.com/lautarok/manosegura/src/internal/modules/users/services"
 )
 
-// @title Mano Segura API
-// @version 1.0
-// @description Documentation of Mano Segura backend API. Use the format: Bearer {token} in the Authorization header.
-
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
 func main() {
 	env := env.NewEnv()
 

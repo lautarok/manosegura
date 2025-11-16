@@ -29,12 +29,6 @@ type HttpConfig struct {
 	DocsGenerator *docs.DocsGenerator
 }
 
-// @title Mano Segura API
-// @version 1.0
-// @description Documentation of Mano Segura backend API
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
 func NewHttp(config *HttpConfig) *Http {
 	app := fiber.New()
 

@@ -5,7 +5,6 @@ import (
 	"github.com/lautarok/manosegura/src/internal/exceptions"
 )
 
-// @Dto SignupDto
 type SignupDto struct {
 	Name           string `validate:"required,min=3,max=40" json:"name" example:"Maia Abigail"`
 	Surname        string `validate:"required,min=3,max=40" json:"surname" example:"Freytes"`

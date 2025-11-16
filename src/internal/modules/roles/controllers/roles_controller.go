@@ -33,30 +33,10 @@ func (controller *RolesController) RegisterRoutes(app fiber.Router) {
 	router.Get("", controller.authMiddleware.AuthUser(false, "manage all"), controller.GetRoles)
 }
 
-// GetRoles godoc
-// @Summary Delete role
-// @Description Delete single role
-// @Tags Roles
-// @Accept json
-// @Produce json
-// @Router delete /roles/:id
-// @Success 200 {array} domain.Role
-// @Param request query dto.PaginationDto false "Pagination"
-// @Returns 200 TokenResponseDto
 func (rolesController *RolesController) RegisterDocs(docs *openapi3.T) {
 
 }
 
-// GetRoles godoc
-// @Summary Get roles
-// @Description Get all roles
-// @Tags Roles
-// @Accept json
-// @Produce json
-// @Router get /roles
-// @Success 200 {array} domain.Role
-// @Param request query dto.PaginationDto false "Pagination"
-// @Security BearerAuth
 func (rolesController *RolesController) GetRoles(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)
