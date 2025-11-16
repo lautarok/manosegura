@@ -1,6 +1,8 @@
 package docs
 
 import (
+	"log"
+	"strconv"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -28,24 +30,8 @@ func NewDocsGenerator(config *DocsGeneratorConfig) *DocsGenerator {
 	}
 }
 
-func (docsGenerator *DocsGenerator) GenerateOas() error {
-	fileSet := NewFileSet()
-	decls := NewFileDeclarations(fileSet)
-
-	docsGenerator.oas = &openapi3.T{
-		OpenAPI: "3.0.0",
-		Info: &openapi3.Info{
-			Title:       docsGenerator.title,
-			Description: docsGenerator.description,
-			Version:     docsGenerator.version,
-		},
-		Paths: &openapi3.Paths{},
-		Components: &openapi3.Components{
-			Schemas: make(map[string]*openapi3.SchemaRef),
-		},
-	}
-
-	for _, domain := range decls.Domains {
+func (docsGenerator *DocsGenerator) createDomains(decls []*Domain) {
+	for _, domain := range decls {
 		newSchema := &openapi3.SchemaRef{
 			Value: &openapi3.Schema{
 				Title:      domain.Name,
@@ -79,8 +65,10 @@ func (docsGenerator *DocsGenerator) GenerateOas() error {
 
 		docsGenerator.oas.Components.Schemas[domain.Name] = newSchema
 	}
+}
 
-	for _, dto := range decls.Dtos {
+func (docsGenerator *DocsGenerator) CreateDtos(decls []*Dto) {
+	for _, dto := range decls {
 		newSchema := &openapi3.SchemaRef{
 			Value: &openapi3.Schema{
 				Title:      dto.Name,
@@ -92,6 +80,7 @@ func (docsGenerator *DocsGenerator) GenerateOas() error {
 			if field.Validation["required"] == "true" {
 				newSchema.Value.Required = append(newSchema.Value.Required, field.Name)
 			}
+
 			newField := &openapi3.SchemaRef{
 				Value: &openapi3.Schema{
 					Type: &openapi3.Types{
@@ -109,13 +98,51 @@ func (docsGenerator *DocsGenerator) GenerateOas() error {
 				newField.Value.Example = field.Example
 			}
 
+			if field.Validation["min"] != "" {
+				min, err := strconv.Atoi(field.Validation["min"])
+				if err != nil {
+					log.Fatal(err)
+				}
+				min2 := float64(min)
+				newField.Value.Min = (&min2)
+			}
+
+			if field.Validation["max"] != "" {
+				max, err := strconv.Atoi(field.Validation["max"])
+				if err != nil {
+					log.Fatal(err)
+				}
+				max2 := float64(max)
+				newField.Value.Max = (&max2)
+			}
+
+			if field.Validation["gte"] != "" {
+				gte, err := strconv.Atoi(field.Validation["gte"])
+				if err != nil {
+					log.Fatal(err)
+				}
+				gte2 := float64(gte)
+				newField.Value.Min = (&gte2)
+			}
+
+			if field.Validation["lte"] != "" {
+				lte, err := strconv.Atoi(field.Validation["lte"])
+				if err != nil {
+					log.Fatal(err)
+				}
+				lte2 := float64(lte)
+				newField.Value.Max = (&lte2)
+			}
+
 			newSchema.Value.Properties[field.Name] = newField
 		}
 
 		docsGenerator.oas.Components.Schemas[dto.Name] = newSchema
 	}
+}
 
-	for _, controller := range decls.Controllers {
+func (docsGenerator *DocsGenerator) CreateControllers(decls []*Controller) {
+	for _, controller := range decls {
 		operation := openapi3.NewOperation()
 		operation.Tags = controller.Tags
 		operation.Description = controller.Description
@@ -159,6 +186,33 @@ func (docsGenerator *DocsGenerator) GenerateOas() error {
 			path.Delete = operation
 		}
 	}
+}
+
+func (docsGenerator *DocsGenerator) GenerateOas() error {
+	fileSet := NewFileSet()
+	decls := NewFileDeclarations(fileSet)
+
+	docsGenerator.oas = &openapi3.T{
+		OpenAPI: "3.0.0",
+		Info: &openapi3.Info{
+			Title:       docsGenerator.title,
+			Description: docsGenerator.description,
+			Version:     docsGenerator.version,
+		},
+		Paths: &openapi3.Paths{},
+		Components: &openapi3.Components{
+			Schemas: make(map[string]*openapi3.SchemaRef),
+		},
+	}
+
+	docsGenerator.createDomains(decls.Domains)
+	docsGenerator.createDomains(decls.Domains)
+
+	docsGenerator.CreateDtos(decls.Dtos)
+	docsGenerator.CreateDtos(decls.Dtos)
+
+	docsGenerator.CreateControllers(decls.Controllers)
+
 	return nil
 }
 

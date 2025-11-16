@@ -5,7 +5,6 @@ import (
 	"github.com/lautarok/manosegura/src/infra/validation"
 )
 
-// @Dto IdDto
 type IdDto struct {
 	ID uuid.UUID `validate:"required,uuid" json:"id"`
 }

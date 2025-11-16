@@ -8,7 +8,6 @@ import (
 	usersDomain "github.com/lautarok/manosegura/src/internal/modules/users/domain"
 )
 
-// swagger:model
 type Credential struct {
 	ID        uuid.UUID         `bun:"id,pk,type:uuid,default:uuid_generate_v4()" json:"id"`
 	Email     string            `bun:",unique,type:VARCHAR(50)" json:"email"`
