@@ -11,11 +11,15 @@ import (
 
 type FileSet struct {
 	controllers map[string]*ast.File
+	dtos        map[string]*ast.File
+	domains     map[string]*ast.File
 }
 
 func NewFileSet() *FileSet {
 	newFileSet := FileSet{
-		make(map[string]*ast.File),
+		controllers: make(map[string]*ast.File),
+		dtos:        make(map[string]*ast.File),
+		domains:     make(map[string]*ast.File),
 	}
 	err := newFileSet.FetchFiles()
 	if err != nil {
@@ -48,23 +52,47 @@ func (fileSet *FileSet) FetchFiles() error {
 				continue
 			}
 
-			if subfolder.Name() == "controllers" {
-				controllers, err := os.ReadDir(baseDir + "/" + module.Name() + "/" + subfolder.Name())
+			if subfolder.Name() == "controllers" || subfolder.Name() == "domain" || subfolder.Name() == "dto" {
+				sets, err := os.ReadDir(baseDir + "/" + module.Name() + "/" + subfolder.Name())
 				if err != nil {
 					return err
 				}
 
-				for _, controller := range controllers {
-					if controller.IsDir() || filepath.Ext(controller.Name()) != ".go" {
+				for _, set := range sets {
+					if set.IsDir() || filepath.Ext(set.Name()) != ".go" {
 						continue
 					}
 
-					file, err := parser.ParseFile(tokenFileSet, baseDir+"/"+module.Name()+"/"+subfolder.Name()+"/"+controller.Name(), nil, parser.ParseComments)
+					file, err := parser.ParseFile(tokenFileSet, baseDir+"/"+module.Name()+"/"+subfolder.Name()+"/"+set.Name(), nil, parser.ParseComments)
 					if err != nil {
 						return err
 					}
 
-					fileSet.controllers[controller.Name()] = file
+					if subfolder.Name() == "controllers" {
+						fileSet.controllers[set.Name()] = file
+					} else if subfolder.Name() == "dto" {
+						fileSet.dtos[set.Name()] = file
+					} else if subfolder.Name() == "domain" {
+						fileSet.domains[set.Name()] = file
+					}
+				}
+			} else if subfolder.Name() == "dtos" {
+				dtos, err := os.ReadDir(baseDir + "/" + module.Name() + "/" + subfolder.Name())
+				if err != nil {
+					return err
+				}
+
+				for _, dto := range dtos {
+					if dto.IsDir() || filepath.Ext(dto.Name()) != ".go" {
+						continue
+					}
+
+					file, err := parser.ParseFile(tokenFileSet, baseDir+"/"+module.Name()+"/"+subfolder.Name()+"/"+dto.Name(), nil, parser.ParseComments)
+					if err != nil {
+						return err
+					}
+
+					fileSet.dtos[dto.Name()] = file
 				}
 			}
 		}

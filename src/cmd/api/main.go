@@ -65,11 +65,15 @@ func main() {
 		RolesService:   rolesService,
 	})
 
-	docsGenerator := docs.NewDocsGenerator(&docs.DocsGeneratorConfig{
-		Title:       "Mano Segura",
-		Description: "Mano Segura API documentation",
-		Version:     "1.0.0",
-	})
+	var docsGenerator *docs.DocsGenerator
+
+	if !env.DISABLE_DOCS {
+		docsGenerator = docs.NewDocsGenerator(&docs.DocsGeneratorConfig{
+			Title:       "Mano Segura",
+			Description: "Mano Segura API documentation",
+			Version:     "1.0.0",
+		})
+	}
 
 	http.NewHttp(&http.HttpConfig{
 		Env:           env,

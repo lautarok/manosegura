@@ -40,24 +40,26 @@ func NewHttp(config *HttpConfig) *Http {
 
 	app.Use(ErrorHandlerMiddleware())
 
-	config.DocsGenerator.GenerateOas()
+	if !config.Env.DISABLE_DOCS {
+		config.DocsGenerator.GenerateOas()
+
+		app.Get("oas.json", func(ctx *fiber.Ctx) error {
+			return ctx.JSON(config.DocsGenerator.Struct())
+		})
+
+		app.Get("/swagger/*", swagger.New(swagger.Config{
+			URL:         "/oas.json",
+			DeepLinking: true,
+		}))
+
+		app.Get("/redoc", func(ctx *fiber.Ctx) error {
+			return ctx.SendFile("./html/redoc.html")
+		})
+	}
 
 	for _, controller := range config.Controllers {
 		controller.RegisterRoutes(app)
 	}
-
-	app.Get("oas.json", func(ctx *fiber.Ctx) error {
-		return ctx.JSON(config.DocsGenerator.Struct())
-	})
-
-	app.Get("/swagger/*", swagger.New(swagger.Config{
-		URL:         "/oas.json",
-		DeepLinking: true,
-	}))
-
-	app.Get("/redoc", func(ctx *fiber.Ctx) error {
-		return ctx.SendFile("./html/redoc.html")
-	})
 
 	err := app.Listen(":" + strconv.Itoa((config.Env.HTTP_PORT)))
 	if err != nil {

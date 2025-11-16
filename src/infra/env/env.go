@@ -14,6 +14,7 @@ type Env struct {
 	HTTP_PORT    int
 	POSTGRES_DSN string
 	JWT_SECRET   string
+	DISABLE_DOCS bool
 }
 
 func NewEnv() *Env {
@@ -36,6 +37,7 @@ func NewEnv() *Env {
 		HTTP_PORT:    httpPort,
 		POSTGRES_DSN: os.Getenv("POSTGRES_DSN"),
 		JWT_SECRET:   os.Getenv("JWT_SECRET"),
+		DISABLE_DOCS: os.Getenv("DISABLE_DOCS") == "true",
 	}
 
 	return Variables
