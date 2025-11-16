@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/lautarok/manosegura/src/internal/modules/common/dto"
 )
 
 var ErrRepeatPasswordNotMatch = errors.New("repeat password and password does not match")
@@ -16,19 +17,14 @@ var ErrBearerTokenNotFound = errors.New("bearer token not found")
 var ErrInvalidBearerToken = errors.New("invalid bearer token")
 var ErrInsufficientPermissions = errors.New("insufficient permissions")
 
-type AppError struct {
-	StatusCode int    `json:"statusCode" example:"500"`
-	Message    string `json:"message"`
-}
-
-func NewAppError(statusCode int, message string) *AppError {
-	return &AppError{
+func NewAppError(statusCode int, message string) *dto.AppError {
+	return &dto.AppError{
 		StatusCode: statusCode,
 		Message:    message,
 	}
 }
 
-func MapError(err error) *AppError {
+func MapError(err error) *dto.AppError {
 	switch err {
 	case ErrRepeatPasswordNotMatch:
 		return NewAppError(400, err.Error())

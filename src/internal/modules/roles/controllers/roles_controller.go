@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
 	"github.com/lautarok/manosegura/src/internal/modules/common/dto"
@@ -33,10 +32,14 @@ func (controller *RolesController) RegisterRoutes(app fiber.Router) {
 	router.Get("", controller.authMiddleware.AuthUser(false, "manage all"), controller.GetRoles)
 }
 
-func (rolesController *RolesController) RegisterDocs(docs *openapi3.T) {
-
-}
-
+// @Summary Get roles
+// @Description Get registered role list
+// @Router get
+// @QueryParams PaginationDto
+// @Returns 200 []Role
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns default AppError
+// @BearerAuth
 func (rolesController *RolesController) GetRoles(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)

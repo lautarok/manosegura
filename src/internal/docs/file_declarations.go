@@ -16,6 +16,7 @@ const (
 )
 
 type Controller struct {
+	BasePath    string
 	Summary     string
 	Description string
 	Tags        []string
@@ -23,6 +24,11 @@ type Controller struct {
 	Method      string
 	Accept      string
 	Returns     map[string]string
+	Body        string
+	QueryParams string
+	RouteParams string
+	BearerAuth  bool
+	Examples    map[string]any
 }
 
 type Dto struct {
@@ -59,7 +65,7 @@ func NewFileDeclarations(fileSet *FileSet) *FileDeclarations {
 }
 
 func tagFromString(controllerName string) string {
-	newControllerName := strings.Join(strings.Split(controllerName, "_"), " ")
+	newControllerName := strings.Join(strings.Split(controllerName, "_"), "")
 	newControllerName = strings.ToUpper(string(newControllerName[0])) + newControllerName[1:]
 	newControllerName = strings.TrimSuffix(newControllerName, "controller.go")
 	return newControllerName

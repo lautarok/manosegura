@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	middleware "github.com/lautarok/manosegura/src/internal/modules/auth/middlewares"
@@ -41,10 +40,11 @@ func (controller *UsersController) RegisterRoutes(app fiber.Router) {
 	router.Get(":id", controller.authMiddleware.AuthUser(true, "manage all"), controller.GetUser)
 }
 
-func (controller *UsersController) RegisterDocs(openapiDocs *openapi3.T) {
-
-}
-
+// @Router get
+// @Returns 200 []User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns default AppError
+// @QueryParams PaginationDto
 func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	var dto dto.PaginationDto
 	err := ctx.QueryParser(&dto)
@@ -61,6 +61,12 @@ func (usersController *UsersController) GetUsers(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router post
+// @Returns 201 User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns 409 AppError example:"{\"statusCode\": 409, \"message\": \"email already in use\"}"
+// @Returns default AppError
+// @BodyRequest CreateUserDto
 func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.CreateUserDto
 	ctx.BodyParser(&dto)
@@ -81,6 +87,14 @@ func (usersController *UsersController) CreateUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router put
+// @Returns 200 User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns 409 AppError example:"{\"statusCode\": 409, \"message\": \"email already in use\"}"
+// @Returns 404 AppError example:"{\"statusCode\": 404, \"message\": \"user not found\"}"
+// @Returns default AppError
+// @BodyRequest CreateUserDto
+// @RouteParams IdDto
 func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 	var dto usersDto.UpdateUserDto
 	ctx.BodyParser(&dto)
@@ -107,6 +121,13 @@ func (usersController *UsersController) UpdateUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router delete
+// @Returns 200 User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns 404 AppError example:"{\"statusCode\": 404, \"message\": \"user not found\"}"
+// @Returns default AppError
+// @BodyRequest CreateUserDto
+// @RouteParams IdDto
 func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)
@@ -132,6 +153,12 @@ func (usersController *UsersController) DeleteUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router get /[id]
+// @Returns 200 User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"unauthorized\"}"
+// @Returns 404 AppError example:"{\"statusCode\": 404, \"message\": \"user not found\"}"
+// @Returns default AppError
+// @RouteParams IdDto
 func (usersController *UsersController) GetUser(ctx *fiber.Ctx) error {
 	var dto dto.IdDto
 	ctx.ParamsParser(&dto)

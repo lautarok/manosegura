@@ -3,7 +3,7 @@ package dto
 import "github.com/lautarok/manosegura/src/infra/validation"
 
 type PaginationDto struct {
-	Page  int `json:"page"`
+	Page  int `json:"page" validate:"gte=0"`
 	Limit int `validate:"gte=1,lte=30" json:"limit"`
 }
 

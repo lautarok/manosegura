@@ -41,7 +41,7 @@ func (authMiddleware *AuthMiddleware) AuthUser(owner bool, permissionAlias ...st
 
 		tokenPayload, err := authMiddleware.authService.GetAuthTokenPayload(tokenStr)
 		if err != nil {
-			return err
+			return exceptions.ErrInvalidBearerToken
 		}
 
 		user, err := authMiddleware.usersService.FindOne(&dto.IdDto{

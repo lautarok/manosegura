@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lautarok/manosegura/src/internal/exceptions"
 	"github.com/lautarok/manosegura/src/internal/modules/auth/dto"
@@ -36,10 +35,11 @@ func (controller *AuthController) RegisterRoutes(app fiber.Router) {
 	router.Get("me", controller.authMiddleware.AuthUser(false), controller.GetMyUser)
 }
 
-func (controller *AuthController) RegisterDocs(docs *openapi3.T) {
-
-}
-
+// @Router post /login
+// @Returns 201 TokenResponseDto
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"invalid credentials\"}"
+// @Returns default AppError
+// @BodyRequest LoginDto
 func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
 	var body dto.LoginDto
 	err := ctx.BodyParser(&body)
@@ -61,6 +61,11 @@ func (usersController *AuthController) Login(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router post /signup
+// @Returns 201 User
+// @Returns 409 AppError example:"{\"statusCode\": 409, \"message\": \"email already in use\"}"
+// @Returns default AppError
+// @BodyRequest SignupDto
 func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
 	var body dto.SignupDto
 	err := ctx.BodyParser(&body)
@@ -80,6 +85,11 @@ func (usersController *AuthController) Signup(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// @Router get /me
+// @Returns 200 User
+// @Returns 401 AppError example:"{\"statusCode\": 401, \"message\": \"token not found\"}"
+// @Returns default AppError
+// @BearerAuth
 func (usersController *AuthController) GetMyUser(ctx *fiber.Ctx) error {
 	user, ok := (ctx.Locals("auth user")).(*domain.User)
 	if !ok {

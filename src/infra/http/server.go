@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"github.com/lautarok/manosegura/src/infra/env"
@@ -20,7 +19,6 @@ type Http struct {
 
 type Controller interface {
 	RegisterRoutes(app fiber.Router)
-	RegisterDocs(docs *openapi3.T)
 }
 
 type HttpConfig struct {

@@ -76,24 +76,6 @@ func (fileSet *FileSet) FetchFiles() error {
 						fileSet.domains[set.Name()] = file
 					}
 				}
-			} else if subfolder.Name() == "dtos" {
-				dtos, err := os.ReadDir(baseDir + "/" + module.Name() + "/" + subfolder.Name())
-				if err != nil {
-					return err
-				}
-
-				for _, dto := range dtos {
-					if dto.IsDir() || filepath.Ext(dto.Name()) != ".go" {
-						continue
-					}
-
-					file, err := parser.ParseFile(tokenFileSet, baseDir+"/"+module.Name()+"/"+subfolder.Name()+"/"+dto.Name(), nil, parser.ParseComments)
-					if err != nil {
-						return err
-					}
-
-					fileSet.dtos[dto.Name()] = file
-				}
 			}
 		}
 	}

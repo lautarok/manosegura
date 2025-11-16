@@ -39,21 +39,13 @@ func FindDomainDeclarations(fileDeclarations *FileDeclarations) {
 									continue
 								}
 
-								fType := "string"
-								if fieldType, ok := typeData.Type.(*ast.Ident); ok {
-									fType = fieldType.String()
-								} else if fieldType, ok := typeData.Type.(*ast.StarExpr); ok {
-									if fieldType2, ok := fieldType.X.(*ast.SelectorExpr); ok {
-										if _, ok := fieldType2.X.(*ast.Ident); ok {
-											fType = fieldType2.Sel.Name
-										}
-									} else if ident, ok := fieldType.X.(*ast.Ident); ok {
-										fType = ident.Name
-									}
-								} else if fieldType, ok := typeData.Type.(*ast.SelectorExpr); ok {
-									if ident, ok := fieldType.X.(*ast.Ident); ok {
-										fType = ident.Name
-									}
+								fType := ResolveAstType(typeData.Type)
+
+								switch fType {
+								case "uuid.UUID":
+									fType = "string"
+								case "time.Time":
+									fType = "date"
 								}
 
 								tagValue := typeData.Tag.Value
